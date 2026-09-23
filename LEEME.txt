@@ -1,4 +1,4 @@
-SMART KITCHEN FIREBASE — V15
+SMART KITCHEN FIREBASE — V16
 
 ESTA VERSION YA ESTA CONECTADA A:
 - Firebase Authentication (correo + contraseña)
@@ -12,7 +12,7 @@ COMO SUBIRLA A GITHUB
 3. Descomprime este ZIP en tu computadora.
 4. Arrastra TODOS los archivos de esta carpeta a la raiz del repositorio.
 5. Si GitHub indica que index.html, service-worker.js o manifest.webmanifest ya existen, deben reemplazarse con estos.
-6. Abajo escribe un mensaje como: Smart Kitchen Firebase V15
+6. Abajo escribe un mensaje como: Smart Kitchen Firebase V16
 7. Presiona Commit changes.
 8. Espera 1 a 3 minutos.
 9. Abre https://jerryrmz.github.io/Smart-kitchen/?v=14
@@ -20,7 +20,7 @@ COMO SUBIRLA A GITHUB
 PRIMER INGRESO
 - Usa el correo y contraseña que creaste en Firebase Authentication.
 - NO existe un boton para registrarse. Tu controlas las cuentas desde Firebase > Authentication > Users.
-- Si Firestore todavia no tiene informacion y este navegador tiene datos de una version anterior, V15 los sube automaticamente a Firebase al primer acceso.
+- Si Firestore todavia no tiene informacion y este navegador tiene datos de una version anterior, V16 los sube automaticamente a Firebase al primer acceso.
 - Si tus datos estaban en otro dispositivo, usa Backup JSON / Cargar JSON una sola vez para migrarlos.
 
 SINCRONIZACION
@@ -46,3 +46,6 @@ service cloud.firestore {
 
 IMPORTANTE
 No compartas contraseñas. Cada persona debe tener su propia cuenta.
+
+
+V16: corrección de foco al escribir. Firebase no reconstruye formularios mientras un campo está activo.

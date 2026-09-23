@@ -139,13 +139,31 @@ function saveAll(){cacheLocal();if(typeof window.smartKitchenCloudSave==='functi
 function autoSave(){cacheLocal();if(typeof window.smartKitchenCloudSave==='function')window.smartKitchenCloudSave(false)}
 function loadAll(){try{const a=localStorage.getItem(CLIENT_KEY);if(a)clients=JSON.parse(a).map(normalizeClient)}catch(e){clients=[]}try{const w=localStorage.getItem(WEEK_KEY);if(w)weeks=JSON.parse(w)||{}}catch(e){weeks={}}try{const m=localStorage.getItem(MENU_KEY);if(m)menus=JSON.parse(m)||{}}catch(e){menus={}}if(!currentWeek)setDefaultWeek();render()}
 window.getSmartKitchenState=()=>({clients:clients.map(normalizeClient),weeks:weeks||{},menus:menus||{}});
-window.applySmartKitchenState=(data={})=>{clients=Array.isArray(data.clients)?data.clients.map(normalizeClient):[];weeks=(data.weeks&&typeof data.weeks==='object')?data.weeks:{};menus=(data.menus&&typeof data.menus==='object')?data.menus:{};if(!currentWeek)setDefaultWeek();cacheLocal();render()};
+window.applySmartKitchenState=(data={})=>{
+  if(editingLock){pendingRemoteState={clients:Array.isArray(data.clients)?data.clients:[],weeks:data.weeks||{},menus:data.menus||{}};return}
+  clients=Array.isArray(data.clients)?data.clients.map(normalizeClient):[];
+  weeks=(data.weeks&&typeof data.weeks==='object')?data.weeks:{};
+  menus=(data.menus&&typeof data.menus==='object')?data.menus:{};
+  if(!currentWeek)setDefaultWeek();cacheLocal();render()
+};
 window.loadSmartKitchenLocal=()=>{loadAll();return window.getSmartKitchenState()};
 window.clearSmartKitchenSession=()=>{clients=[];weeks={};menus={};selectedWeekPersonId=null;try{localStorage.removeItem(CLIENT_KEY);localStorage.removeItem(WEEK_KEY);localStorage.removeItem(MENU_KEY)}catch(e){}};
 function setDefaultWeek(){const d=new Date(),day=d.getDay(),diff=(day===0?-6:1-day);d.setDate(d.getDate()+diff);currentWeek=d.toISOString().slice(0,10);document.getElementById('weekDate').value=currentWeek}
 function showView(v){document.getElementById('peopleView').classList.toggle('active',v==='people');document.getElementById('weekView').classList.toggle('active',v==='week');document.getElementById('tabPeople').classList.toggle('active',v==='people');document.getElementById('tabWeek').classList.toggle('active',v==='week');if(v==='week')renderWeek()}
 function addPerson(){clients.push(normalizeClient({id:Date.now()+Math.floor(Math.random()*10000)}));renderPeople();setTimeout(()=>document.querySelector('#clients-container .card:last-child input')?.focus(),50);autoSave()}
-function updateClient(id,field,value){const i=clients.findIndex(c=>String(c.id)===String(id));if(i<0)return;clients[i][field]=value;renderSummary();renderStats();renderWeekSelect();if(selectedWeekPersonId==id)renderWeekDetail(id);autoSave()}
+function updateClient(id,field,value){
+  const i=clients.findIndex(c=>String(c.id)===String(id));if(i<0)return;
+  clients[i][field]=value;
+  // Los campos de texto NO provocan re-render mientras se escribe.
+  // Esto mantiene intactos el foco, cursor y teclado en celular.
+  const textFields=['nombre','gustos','noGusta','solicitudes','planCustom','diasCustom','modalidadCustom','notasPago'];
+  if(!textFields.includes(field)){
+    renderSummary();renderStats();renderWeekSelect();
+    if(selectedWeekPersonId==id)renderWeekDetail(id);
+  }
+  cacheLocal();
+  if(typeof window.smartKitchenCloudSave==='function')window.smartKitchenCloudSave(false);
+}
 function removePerson(id){if(!confirm('¿Borrar esta persona del catálogo? También se quitará de las semanas donde esté agregada.'))return;clients=clients.filter(c=>String(c.id)!==String(id));Object.keys(weeks).forEach(k=>weeks[k]=(weeks[k]||[]).filter(x=>String(x)!==String(id)));if(String(selectedWeekPersonId)===String(id))selectedWeekPersonId=null;render();autoSave()}
 function planText(c){return c.plan==='Custom'?(c.planCustom||'---'):c.plan}function diasText(c){return c.dias==='Personalizado'?(c.diasCustom||'---'):c.dias}function modalidadText(c){return c.modalidadPago==='Otro'?(c.modalidadCustom||'---'):c.modalidadPago}function pagoClass(p){return p==='Pagado por adelantado'?'advance':p==='Pagado'?'paid':p==='No pagado'?'unpaid':'pending'}function formatDate(v){if(!v)return'---';const [y,m,d]=v.split('-');return `${d}/${m}/${y}`}function addDaysISO(iso,n){if(!iso)return'';const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}function weekEndDate(selectedDate=currentWeek){if(!selectedDate)return'';const d=new Date(selectedDate+'T12:00:00');const day=d.getDay();let daysToFriday;if(day===0){daysToFriday=5}else if(day===6){daysToFriday=6}else{daysToFriday=5-day}d.setDate(d.getDate()+daysToFriday);return d.toISOString().slice(0,10)}function effectivePaymentStatus(c,weekStart=currentWeek){if(c.pagoOverride&&c.pagoOverride!=='Automatico')return c.pagoOverride;const end=weekEndDate(weekStart);if(!c.pagadoHasta||!end)return'No pagado';return c.pagadoHasta>=end?'Pagado':'No pagado'}
 function render(){renderPeople();renderWeek()}
@@ -296,6 +314,9 @@ let unsubscribe=null;
 let saveTimer=null;
 let cloudStarted=false;
 const sessionId=(crypto?.randomUUID?.() || ('sk-'+Date.now()+'-'+Math.random().toString(36).slice(2)));
+let editingLock=false;
+let editingReleaseTimer=null;
+let editingSince=0;
 let pendingRemoteState=null;
 
 const authScreen=document.getElementById('authScreen');
@@ -317,11 +338,20 @@ async function saveCloudNow(){
   const state=window.getSmartKitchenState();
   try{
     setCloudStatus('Guardando en Firebase…','syncing');
-    await setDoc(sharedRef,{clients:state.clients,weeks:state.weeks,menus:state.menus,schemaVersion:15,updatedAt:serverTimestamp(),updatedBy:user.email||user.uid,updatedBySession:sessionId},{merge:true});
+    await setDoc(sharedRef,{clients:state.clients,weeks:state.weeks,menus:state.menus,schemaVersion:16,updatedAt:serverTimestamp(),updatedBy:user.email||user.uid,updatedBySession:sessionId},{merge:true});
     setCloudStatus('Sincronizado con Firebase','online');
   }catch(error){console.error('Firebase save error',error);setCloudStatus('Sin conexión · copia local guardada','offline')}
 }
-window.smartKitchenCloudSave=(immediate=false)=>{clearTimeout(saveTimer);if(immediate){saveCloudNow();return}saveTimer=setTimeout(saveCloudNow,1400)};
+window.smartKitchenCloudSave=(immediate=false)=>{
+  clearTimeout(saveTimer);
+  if(immediate){saveCloudNow();return}
+  // Mientras el usuario escribe, esperamos un poco más para evitar ecos de sincronización.
+  const delay=editingLock?2600:1200;
+  saveTimer=setTimeout(()=>{
+    if(editingLock){window.smartKitchenCloudSave(false);return}
+    saveCloudNow();
+  },delay);
+};
 window.firebaseLogout=async()=>{window.clearSmartKitchenSession?.();await signOut(auth)};
 
 async function startCloud(user){
@@ -351,25 +381,15 @@ async function startCloud(user){
         return;
       }
 
-      // Si el usuario está escribiendo, esperar a que termine antes de aplicar un cambio remoto.
-      const active=document.activeElement;
-      const editing=active && ['INPUT','TEXTAREA','SELECT'].includes(active.tagName) && !active.closest('#authScreen');
-      if(editing){
+      // Protección fuerte de edición: mientras haya un campo activo NO reconstruimos la interfaz.
+      if(editingLock){
         pendingRemoteState=incoming;
-        const applyAfterEditing=()=>{
-          active.removeEventListener('blur',applyAfterEditing);
-          if(pendingRemoteState){
-            const queued=pendingRemoteState;
-            pendingRemoteState=null;
-            window.applySmartKitchenState(queued);
-          }
-        };
-        active.addEventListener('blur',applyAfterEditing,{once:true});
-        setCloudStatus('Cambio remoto pendiente · termina de escribir','syncing');
-      }else{
-        window.applySmartKitchenState(incoming);
+        setCloudStatus('Guardando al terminar de escribir…','syncing');
+        return;
       }
-      if(!snap.metadata.hasPendingWrites && !editing)setCloudStatus('Sincronizado con Firebase','online');
+
+      window.applySmartKitchenState(incoming);
+      if(!snap.metadata.hasPendingWrites)setCloudStatus('Sincronizado con Firebase','online');
     },error=>{console.error('Firebase realtime error',error);setCloudStatus('Sin conexión · trabajando con copia local','offline')});
   }catch(error){
     console.error('Firebase startup error',error);
@@ -385,6 +405,38 @@ loginForm.addEventListener('submit',async e=>{
 });
 
 try{await setPersistence(auth,browserLocalPersistence)}catch(e){console.warn('Auth persistence',e)}
+
+// Bloqueo de edición: mientras el usuario escribe, no aplicamos estados remotos ni reconstruimos formularios.
+document.addEventListener('focusin',event=>{
+  const el=event.target;
+  if(!el || !['INPUT','TEXTAREA','SELECT'].includes(el.tagName) || el.closest('#authScreen')) return;
+  clearTimeout(editingReleaseTimer);
+  editingLock=true;
+  editingSince=Date.now();
+});
+
+document.addEventListener('focusout',event=>{
+  const el=event.target;
+  if(!el || !['INPUT','TEXTAREA','SELECT'].includes(el.tagName) || el.closest('#authScreen')) return;
+  clearTimeout(editingReleaseTimer);
+  editingReleaseTimer=setTimeout(async ()=>{
+    const active=document.activeElement;
+    const stillEditing=active && ['INPUT','TEXTAREA','SELECT'].includes(active.tagName) && !active.closest('#authScreen');
+    if(stillEditing) return;
+    editingLock=false;
+    renderSummary();renderStats();renderWeekSelect();
+    if(selectedWeekPersonId)renderWeekDetail(selectedWeekPersonId);
+    clearTimeout(saveTimer);
+    await saveCloudNow();
+    if(pendingRemoteState){
+      const queued=pendingRemoteState;
+      pendingRemoteState=null;
+      const current=window.getSmartKitchenState();
+      if(JSON.stringify(queued)!==JSON.stringify(current)) window.applySmartKitchenState(queued);
+    }
+  },650);
+});
+
 onAuthStateChanged(auth,user=>{
   authLoading.style.display='none';
   if(user){loginForm.style.display='none';loginButton.disabled=false;loginButton.textContent='Entrar a Smart Kitchen';startCloud(user)}
