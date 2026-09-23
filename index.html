@@ -109,7 +109,7 @@ button,input,select,textarea{touch-action:manipulation}
 </div>
 <div class="container" id="appShell" style="display:none">
   <div id="mobileEnvNotice" style="display:none;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:.82rem;line-height:1.45"><b>Modo archivo local</b><br>En iPhone, la vista previa de archivos HTML puede bloquear los botones. Para usar todas las funciones, abre Smart Kitchen como sitio web o app instalada desde Safari.</div>
-  <div class="topbar"><div class="toprow"><div class="title"><h1>Smart Kitchen Manager <span style="font-size:.7rem;opacity:.6;font-weight:700">V19</span></h1><p id="save-status"><span id="cloudDot" class="cloud-dot"></span>Conectando con Firebase…</p></div><div class="controls"><button class="btn-save" onclick="saveAll()">☁️ Guardar ahora</button><button class="btn-json" onclick="saveJSON()">⬇️ Backup JSON</button><input type="file" id="fileInput" hidden accept=".json" onchange="loadJSON(this)"><button class="btn-load" onclick="document.getElementById('fileInput').click()">📂 Cargar JSON</button><button class="btn-export" onclick="exportCSV()">📊 Exportar CSV</button><div class="user-chip"><span id="currentUserEmail">—</span><button class="btn-logout" onclick="firebaseLogout()">Salir</button></div></div></div></div>
+  <div class="topbar"><div class="toprow"><div class="title"><h1>Smart Kitchen Manager <span style="font-size:.7rem;opacity:.6;font-weight:700">V20</span></h1><p id="save-status"><span id="cloudDot" class="cloud-dot"></span>Conectando con Firebase…</p></div><div class="controls"><button class="btn-save" onclick="saveAll()">☁️ Guardar ahora</button><button class="btn-json" onclick="saveJSON()">⬇️ Backup JSON</button><input type="file" id="fileInput" hidden accept=".json" onchange="loadJSON(this)"><button class="btn-load" onclick="document.getElementById('fileInput').click()">📂 Cargar JSON</button><button class="btn-export" onclick="exportCSV()">📊 Exportar CSV</button><div class="user-chip"><span id="currentUserEmail">—</span><button class="btn-logout" onclick="firebaseLogout()">Salir</button></div></div></div></div>
 
   <div class="nav"><button id="tabPeople" class="tab active" onclick="showView('people')">👥 Personas guardadas</button><button id="tabWeek" class="tab" onclick="showView('week')">📅 Semana</button></div>
 
@@ -138,9 +138,11 @@ function setCloudStatus(message,state='online'){const s=document.getElementById(
 function saveAll(){cacheLocal();if(typeof window.smartKitchenCloudSave==='function'){setCloudStatus('Guardando en Firebase…','syncing');window.smartKitchenCloudSave(true)}else{setCloudStatus('Guardado en este dispositivo','offline')}}
 function autoSave(){cacheLocal();if(typeof window.smartKitchenCloudSave==='function')window.smartKitchenCloudSave(false)}
 function loadAll(){try{const a=localStorage.getItem(CLIENT_KEY);if(a)clients=JSON.parse(a).map(normalizeClient)}catch(e){clients=[]}try{const w=localStorage.getItem(WEEK_KEY);if(w)weeks=JSON.parse(w)||{}}catch(e){weeks={}}try{const m=localStorage.getItem(MENU_KEY);if(m)menus=JSON.parse(m)||{}}catch(e){menus={}}if(!currentWeek)setDefaultWeek();render()}
+window.editingLock = window.editingLock ?? false;
+window.pendingRemoteState = window.pendingRemoteState ?? null;
 window.getSmartKitchenState=()=>({clients:clients.map(normalizeClient),weeks:weeks||{},menus:menus||{}});
 window.applySmartKitchenState=(data={})=>{
-  if(editingLock){pendingRemoteState={clients:Array.isArray(data.clients)?data.clients:[],weeks:data.weeks||{},menus:data.menus||{}};return}
+  if(window.editingLock){window.pendingRemoteState={clients:Array.isArray(data.clients)?data.clients:[],weeks:data.weeks||{},menus:data.menus||{}};return}
   clients=Array.isArray(data.clients)?data.clients.map(normalizeClient):[];
   weeks=(data.weeks&&typeof data.weeks==='object')?data.weeks:{};
   menus=(data.menus&&typeof data.menus==='object')?data.menus:{};
@@ -314,10 +316,10 @@ let unsubscribe=null;
 let saveTimer=null;
 let cloudStarted=false;
 const sessionId=(crypto?.randomUUID?.() || ('sk-'+Date.now()+'-'+Math.random().toString(36).slice(2)));
-let editingLock=false;
+window.editingLock=false;
 let editingReleaseTimer=null;
 let editingSince=0;
-let pendingRemoteState=null;
+window.pendingRemoteState=null;
 
 const authScreen=document.getElementById('authScreen');
 const appShell=document.getElementById('appShell');
@@ -347,9 +349,9 @@ window.smartKitchenCloudSave=(immediate=false)=>{
   clearTimeout(saveTimer);
   if(immediate){saveCloudNow();return}
   // Mientras el usuario escribe, esperamos un poco más para evitar ecos de sincronización.
-  const delay=editingLock?2600:1200;
+  const delay=window.editingLock?2600:1200;
   saveTimer=setTimeout(()=>{
-    if(editingLock){window.smartKitchenCloudSave(false);return}
+    if(window.editingLock){window.smartKitchenCloudSave(false);return}
     saveCloudNow();
   },delay);
 };
@@ -383,8 +385,8 @@ async function startCloud(user){
       }
 
       // Protección fuerte de edición: mientras haya un campo activo NO reconstruimos la interfaz.
-      if(editingLock){
-        pendingRemoteState=incoming;
+      if(window.editingLock){
+        window.pendingRemoteState=incoming;
         setCloudStatus('Guardando al terminar de escribir…','syncing');
         return;
       }
@@ -414,7 +416,7 @@ document.addEventListener('focusin',event=>{
   const el=event.target;
   if(!el || !['INPUT','TEXTAREA','SELECT'].includes(el.tagName) || el.closest('#authScreen')) return;
   clearTimeout(editingReleaseTimer);
-  editingLock=true;
+  window.editingLock=true;
   editingSince=Date.now();
 });
 
@@ -426,14 +428,14 @@ document.addEventListener('focusout',event=>{
     const active=document.activeElement;
     const stillEditing=active && ['INPUT','TEXTAREA','SELECT'].includes(active.tagName) && !active.closest('#authScreen');
     if(stillEditing) return;
-    editingLock=false;
+    window.editingLock=false;
     renderSummary();renderStats();renderWeekSelect();
     if(selectedWeekPersonId)renderWeekDetail(selectedWeekPersonId);
     clearTimeout(saveTimer);
     await saveCloudNow();
-    if(pendingRemoteState){
-      const queued=pendingRemoteState;
-      pendingRemoteState=null;
+    if(window.pendingRemoteState){
+      const queued=window.pendingRemoteState;
+      window.pendingRemoteState=null;
       const current=window.getSmartKitchenState();
       if(JSON.stringify(queued)!==JSON.stringify(current)) window.applySmartKitchenState(queued);
     }
