@@ -4,7 +4,7 @@
   "short_name": "Smart Kitchen",
   "description": "Gestión semanal de personas, comidas, pagos y menú.",
   "lang": "es-MX",
-  "start_url": "./",
+  "start_url": "./?v=18",
   "scope": "./",
   "display": "standalone",
   "display_override": [
