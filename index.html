@@ -295,6 +295,8 @@ const sharedRef=doc(db,'smartKitchen','shared');
 let unsubscribe=null;
 let saveTimer=null;
 let cloudStarted=false;
+const sessionId=(crypto?.randomUUID?.() || ('sk-'+Date.now()+'-'+Math.random().toString(36).slice(2)));
+let pendingRemoteState=null;
 
 const authScreen=document.getElementById('authScreen');
 const appShell=document.getElementById('appShell');
@@ -315,11 +317,11 @@ async function saveCloudNow(){
   const state=window.getSmartKitchenState();
   try{
     setCloudStatus('Guardando en Firebase…','syncing');
-    await setDoc(sharedRef,{clients:state.clients,weeks:state.weeks,menus:state.menus,schemaVersion:14,updatedAt:serverTimestamp(),updatedBy:user.email||user.uid},{merge:true});
+    await setDoc(sharedRef,{clients:state.clients,weeks:state.weeks,menus:state.menus,schemaVersion:15,updatedAt:serverTimestamp(),updatedBy:user.email||user.uid,updatedBySession:sessionId},{merge:true});
     setCloudStatus('Sincronizado con Firebase','online');
   }catch(error){console.error('Firebase save error',error);setCloudStatus('Sin conexión · copia local guardada','offline')}
 }
-window.smartKitchenCloudSave=(immediate=false)=>{clearTimeout(saveTimer);if(immediate){saveCloudNow();return}saveTimer=setTimeout(saveCloudNow,650)};
+window.smartKitchenCloudSave=(immediate=false)=>{clearTimeout(saveTimer);if(immediate){saveCloudNow();return}saveTimer=setTimeout(saveCloudNow,1400)};
 window.firebaseLogout=async()=>{window.clearSmartKitchenSession?.();await signOut(auth)};
 
 async function startCloud(user){
@@ -334,10 +336,40 @@ async function startCloud(user){
     unsubscribe=onSnapshot(sharedRef,{includeMetadataChanges:true},snap=>{
       if(!snap.exists())return;
       const d=snap.data();
+
+      // Nunca volver a renderizar la interfaz por un cambio originado en esta misma pestaña.
+      // Esto evita que inputs y textareas pierdan el foco mientras el usuario escribe.
+      if(d.updatedBySession===sessionId){
+        if(!snap.metadata.hasPendingWrites)setCloudStatus('Sincronizado con Firebase','online');
+        return;
+      }
+
       const incoming={clients:Array.isArray(d.clients)?d.clients:[],weeks:d.weeks||{},menus:d.menus||{}};
       const current=window.getSmartKitchenState();
-      if(JSON.stringify(incoming)!==JSON.stringify(current))window.applySmartKitchenState(incoming);
-      if(!snap.metadata.hasPendingWrites)setCloudStatus('Sincronizado con Firebase','online');
+      if(JSON.stringify(incoming)===JSON.stringify(current)){
+        if(!snap.metadata.hasPendingWrites)setCloudStatus('Sincronizado con Firebase','online');
+        return;
+      }
+
+      // Si el usuario está escribiendo, esperar a que termine antes de aplicar un cambio remoto.
+      const active=document.activeElement;
+      const editing=active && ['INPUT','TEXTAREA','SELECT'].includes(active.tagName) && !active.closest('#authScreen');
+      if(editing){
+        pendingRemoteState=incoming;
+        const applyAfterEditing=()=>{
+          active.removeEventListener('blur',applyAfterEditing);
+          if(pendingRemoteState){
+            const queued=pendingRemoteState;
+            pendingRemoteState=null;
+            window.applySmartKitchenState(queued);
+          }
+        };
+        active.addEventListener('blur',applyAfterEditing,{once:true});
+        setCloudStatus('Cambio remoto pendiente · termina de escribir','syncing');
+      }else{
+        window.applySmartKitchenState(incoming);
+      }
+      if(!snap.metadata.hasPendingWrites && !editing)setCloudStatus('Sincronizado con Firebase','online');
     },error=>{console.error('Firebase realtime error',error);setCloudStatus('Sin conexión · trabajando con copia local','offline')});
   }catch(error){
     console.error('Firebase startup error',error);
