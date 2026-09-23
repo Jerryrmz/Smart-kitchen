@@ -279,7 +279,7 @@ function printWeekReport(){
   const w=window.open('','_blank');if(!w){alert('El navegador bloqueó la ventana de impresión. Permite ventanas emergentes para este archivo.');return}w.document.open();w.document.write(html);w.document.close();
 }
 
-function saveJSON(){const data={version:14,clients,weeks,menus};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup_smartkitchen_firebase_v14.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function saveJSON(){const data={version:17,clients,weeks,menus};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup_smartkitchen_firebase_v17.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function loadJSON(input){const file=input.files[0];if(!file)return;const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);if(Array.isArray(d)){clients=d.map(normalizeClient);weeks={}}else if(d&&Array.isArray(d.clients)){clients=d.clients.map(normalizeClient);weeks=d.weeks||{};menus=d.menus||{}}else throw new Error();autoSave();render();alert('Información cargada correctamente.')}catch(err){alert('El archivo JSON no es válido.')}input.value=''};r.readAsText(file)}
 function cleanText(t){if(!t)return'';return t.toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ñ/g,'n').replace(/Ñ/g,'N').trim()}
 function exportCSV(){if(!clients.length)return alert('No hay datos para exportar');let csv='sep=;\n';const h=['NOMBRE','LE GUSTA','NO LE GUSTA','SOLICITUDES ESPECIALES','PLAN DE COMIDAS','DIAS CONTRATADOS','ESTADO DE PAGO','CONTROL DE PAGO','MODALIDAD DE PAGO','PAGADO HASTA','NOTA DE PAGO'];csv+=h.join(';')+'\n';clients.forEach(c=>{csv+=[c.nombre,c.gustos,c.noGusta,c.solicitudes,planText(c),diasText(c),effectivePaymentStatus(c),c.pagoOverride==='Automatico'?'Automatico por fecha':c.pagoOverride,modalidadText(c),c.pagadoHasta,c.notasPago].map(v=>`"${cleanText(v).replace(/"/g,'""')}"`).join(';')+'\n'});const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`SmartKitchen_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)}
@@ -295,7 +295,7 @@ window.addEventListener('DOMContentLoaded',initSmartKitchen);
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { initializeFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBGAXiJM_lsggC43ivs8AkVEaeyrMeI0kY",
@@ -308,7 +308,7 @@ const firebaseConfig = {
 
 const firebaseApp=initializeApp(firebaseConfig);
 const auth=getAuth(firebaseApp);
-const db=getFirestore(firebaseApp);
+const db=initializeFirestore(firebaseApp,{experimentalAutoDetectLongPolling:true,useFetchStreams:false});
 const sharedRef=doc(db,'smartKitchen','shared');
 let unsubscribe=null;
 let saveTimer=null;
@@ -330,6 +330,7 @@ const passwordInput=document.getElementById('loginPassword');
 
 function showError(message){authError.textContent=message;authError.style.display='block'}
 function friendlyAuthError(error){const code=String(error?.code||'');if(code.includes('invalid-credential')||code.includes('wrong-password')||code.includes('user-not-found'))return 'El correo o la contraseña no son correctos.';if(code.includes('too-many-requests'))return 'Se hicieron demasiados intentos. Espera un momento e inténtalo nuevamente.';if(code.includes('network-request-failed'))return 'No se pudo conectar a Internet. Revisa tu conexión.';if(code.includes('invalid-email'))return 'El correo electrónico no es válido.';return 'No se pudo iniciar sesión. '+(error?.message||'')}
+function cloudErrorLabel(error){const code=String(error?.code||'').replace('firestore/','');if(code.includes('permission-denied'))return 'Permiso denegado por Firestore';if(code.includes('unavailable'))return 'Firebase temporalmente no disponible';if(code.includes('failed-precondition'))return 'Configuración de Firestore pendiente';if(code.includes('unauthenticated'))return 'Sesión no autenticada';if(code.includes('network'))return 'Error de red';return code?('Firebase: '+code):'No se pudo conectar a Firebase'}
 function showLogin(){appShell.style.display='none';authScreen.style.display='grid';authLoading.style.display='none';loginForm.style.display='block';loginButton.disabled=false;document.getElementById('currentUserEmail').textContent='—'}
 function showApp(user){authScreen.style.display='none';appShell.style.display='block';document.getElementById('currentUserEmail').textContent=user.email||'Usuario';}
 
@@ -338,9 +339,9 @@ async function saveCloudNow(){
   const state=window.getSmartKitchenState();
   try{
     setCloudStatus('Guardando en Firebase…','syncing');
-    await setDoc(sharedRef,{clients:state.clients,weeks:state.weeks,menus:state.menus,schemaVersion:16,updatedAt:serverTimestamp(),updatedBy:user.email||user.uid,updatedBySession:sessionId},{merge:true});
+    await setDoc(sharedRef,{clients:state.clients,weeks:state.weeks,menus:state.menus,schemaVersion:17,updatedAt:serverTimestamp(),updatedBy:user.email||user.uid,updatedBySession:sessionId},{merge:true});
     setCloudStatus('Sincronizado con Firebase','online');
-  }catch(error){console.error('Firebase save error',error);setCloudStatus('Sin conexión · copia local guardada','offline')}
+  }catch(error){console.error('Firebase save error',error);setCloudStatus(cloudErrorLabel(error)+' · copia local guardada','offline')}
 }
 window.smartKitchenCloudSave=(immediate=false)=>{
   clearTimeout(saveTimer);
@@ -390,11 +391,11 @@ async function startCloud(user){
 
       window.applySmartKitchenState(incoming);
       if(!snap.metadata.hasPendingWrites)setCloudStatus('Sincronizado con Firebase','online');
-    },error=>{console.error('Firebase realtime error',error);setCloudStatus('Sin conexión · trabajando con copia local','offline')});
+    },error=>{console.error('Firebase realtime error',error);setCloudStatus(cloudErrorLabel(error)+' · usando copia local','offline')});
   }catch(error){
     console.error('Firebase startup error',error);
     window.loadSmartKitchenLocal();
-    setCloudStatus('Sin conexión · trabajando con copia local','offline');
+    setCloudStatus(cloudErrorLabel(error)+' · usando copia local','offline');
   }
 }
 
@@ -405,6 +406,8 @@ loginForm.addEventListener('submit',async e=>{
 });
 
 try{await setPersistence(auth,browserLocalPersistence)}catch(e){console.warn('Auth persistence',e)}
+window.addEventListener('online',()=>{if(auth.currentUser){setCloudStatus('Internet disponible · reconectando…','syncing');startCloud(auth.currentUser)}});
+window.addEventListener('offline',()=>setCloudStatus('Sin Internet · trabajando con copia local','offline'));
 
 // Bloqueo de edición: mientras el usuario escribe, no aplicamos estados remotos ni reconstruimos formularios.
 document.addEventListener('focusin',event=>{
