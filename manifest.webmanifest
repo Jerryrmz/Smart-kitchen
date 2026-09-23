@@ -1,0 +1,41 @@
+{
+  "id": "./",
+  "name": "Smart Kitchen Manager",
+  "short_name": "Smart Kitchen",
+  "description": "Gestión semanal de personas, comidas, pagos y menú.",
+  "lang": "es-MX",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
+  "background_color": "#f1f5f9",
+  "theme_color": "#0f172a",
+  "categories": [
+    "productivity",
+    "food"
+  ],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

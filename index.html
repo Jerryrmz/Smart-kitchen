@@ -2,8 +2,17 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Kitchen Manager V9</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Smart Kitchen Manager</title>
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Smart Kitchen">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <style>
 :root{--primary:#4f46e5;--primary2:#6366f1;--success:#16a34a;--warning:#d97706;--danger:#dc2626;--bg:#f1f5f9;--card:#fff;--dark:#0f172a;--muted:#64748b;--line:#e2e8f0;--soft:#f8fafc;--info:#0284c7}
 *{box-sizing:border-box}body{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);margin:0;padding:20px;color:#334155}.container{max-width:1280px;margin:auto}
@@ -39,11 +48,68 @@ button{cursor:pointer;padding:10px 14px;border-radius:8px;border:0;font-weight:7
 @media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:repeat(2,1fr)}.span4{grid-column:1/-1}.week-layout{grid-template-columns:1fr}.week-toolbar{grid-template-columns:1fr}}
 @media(max-width:700px){.menu-grid{grid-template-columns:90px repeat(3,minmax(150px,1fr));overflow:auto}.menu-week{overflow:auto}}
 @media(max-width:600px){body{padding:10px}.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.span2,.span4{grid-column:1}.search{min-width:100%}.detail-grid{grid-template-columns:1fr}.detail-box.full{grid-column:1}}
+/* ===== V11: experiencia móvil / táctil ===== */
+button,input,select,textarea{touch-action:manipulation}
+.menu-grid.mobile-menu .menu-header,.menu-grid.mobile-menu .menu-row{display:contents}.mobile-meal-label{display:none}
+@media(max-width:700px){
+  body{padding:8px;padding-left:max(8px,env(safe-area-inset-left));padding-right:max(8px,env(safe-area-inset-right));padding-bottom:max(14px,env(safe-area-inset-bottom))}
+  .container{width:100%;max-width:none}
+  .topbar{padding:16px 14px;border-radius:14px;margin-bottom:10px}.toprow{display:block}.title h1{font-size:1.28rem}.title p{font-size:.76rem}
+  .topbar .controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}.topbar .controls button{width:100%;min-height:44px;padding:10px 8px;font-size:.76rem}
+  .nav{position:sticky;top:6px;z-index:50;width:100%;display:grid;grid-template-columns:1fr 1fr;margin-bottom:12px;box-shadow:0 5px 15px rgba(15,23,42,.08)}.nav .tab{min-height:44px;padding:9px 6px;font-size:.78rem;white-space:nowrap}
+  button{min-height:44px}.collapse-toggle,.remove-week{min-width:44px;min-height:44px;padding:8px}.btn-delete{min-height:44px}
+  input,select,textarea{font-size:16px;padding:11px 12px}label{font-size:.74rem}.help{font-size:.72rem;line-height:1.35}
+  .stats-wrap{margin-bottom:12px}.stats{gap:8px;margin-bottom:12px}.stat{padding:12px;border-radius:12px}.stat .k{font-size:.64rem}.stat .v{font-size:1.38rem}.stat small{font-size:.68rem}
+  .panel,.meal-summary,.week-list,.detail,.card{border-radius:13px;margin-bottom:12px}.panel-header,.meal-summary-head,.week-list-head{padding:12px}.panel-header-title{align-items:stretch}.panel-header-title>.row{width:100%;margin-left:0}.panel-header-title>.row .search{width:100%;flex-basis:100%}.panel-header-title>.row .btn-add{flex:1}.module-title-actions{flex-wrap:wrap;justify-content:flex-end}
+  .card.collapsible .card-head{padding:12px 14px}.card.collapsible .collapse-body{padding:0 14px 14px}.card-head{align-items:flex-start}.card-title{font-size:1rem;padding-top:8px;overflow-wrap:anywhere}
+  .section-title{margin-top:8px;padding-top:10px}.grid{gap:10px}.form-group{gap:6px}
+  .table-wrap{overflow:visible;max-height:none;padding:8px;background:#f8fafc}.table-wrap table{min-width:0;width:100%;display:block}.table-wrap thead{display:none}.table-wrap tbody{display:block}.table-wrap tr{display:block;background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 6px rgba(15,23,42,.04)}.table-wrap td{display:grid;grid-template-columns:42% 58%;gap:8px;padding:9px 11px;border-top:1px solid #f1f5f9;font-size:.82rem;overflow-wrap:anywhere}.table-wrap td:first-child{border-top:0;background:#f8fafc;font-size:.95rem}.table-wrap td::before{content:attr(data-label);font-size:.64rem;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.table-wrap td.empty{display:block;text-align:center}.table-wrap td.empty::before{display:none}
+  .week-toolbar{grid-template-columns:1fr;gap:10px}.week-toolbar button{width:100%}.week-layout{display:block}.week-list{margin-bottom:12px}.person-list{max-height:none;padding:8px}.person-item{padding:12px 10px;min-height:78px}.person-name{font-size:1rem}.person-plan{font-size:.96rem}.person-payment{margin-top:6px}.remove-week{font-size:1.1rem;flex:0 0 44px}
+  .detail{padding:14px;min-height:0}.detail>.row{gap:8px}.detail h2{font-size:1.35rem}.detail-sub{font-size:.78rem;line-height:1.45;margin-bottom:12px}.detail-grid{gap:9px}.detail-box{padding:13px}.detail-value{font-size:1rem}.detail-box.planbox .detail-value{font-size:1.12rem}
+  .meal-summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px}.meal-summary-card{min-width:0;padding:11px}.meal-summary-plan{font-size:.72rem}.meal-summary-count{font-size:1.28rem}
+  .menu-week{padding:10px;overflow:visible}.menu-grid.mobile-menu{display:block;border:0;background:transparent;overflow:visible}.menu-grid.mobile-menu .menu-header{display:none}.menu-grid.mobile-menu .menu-row{display:block;background:white;border:1px solid var(--line);border-radius:13px;overflow:hidden;margin-bottom:11px;box-shadow:0 2px 6px rgba(15,23,42,.04)}.menu-grid.mobile-menu .menu-row:last-child{margin-bottom:0}.menu-grid.mobile-menu .menu-cell{border:0;border-bottom:1px solid #f1f5f9;padding:10px 12px}.menu-grid.mobile-menu .menu-row .menu-cell:last-child{border-bottom:0}.menu-grid.mobile-menu .menu-day{background:#f8fafc;padding:11px 12px;font-size:1rem;font-weight:900}.mobile-meal-label{display:block;font-size:.69rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:6px}.mobile-meal-label.breakfast{color:#b45309}.mobile-meal-label.lunch{color:#15803d}.mobile-meal-label.dinner{color:#4f46e5}.menu-input{font-size:16px;min-height:78px;padding:10px}
+  .menu-title-row{align-items:flex-start}.menu-title-row .row{width:100%}
+}
+@media(max-width:390px){.stats{grid-template-columns:1fr}.meal-summary-grid{grid-template-columns:1fr}.topbar .controls{grid-template-columns:1fr}.nav .tab{font-size:.72rem}.table-wrap td{grid-template-columns:38% 62%}}
+
+
+/* Firebase login + cloud status */
+.auth-screen{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at top left,#1e3a8a 0,#0f172a 45%,#020617 100%);color:#fff}
+.auth-card{width:min(430px,100%);background:rgba(255,255,255,.98);color:#0f172a;border-radius:24px;padding:28px;box-shadow:0 28px 80px rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.22)}
+.auth-brand{display:flex;align-items:center;gap:13px;margin-bottom:22px}.auth-logo{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:#0f172a;color:#fff;font-weight:950;letter-spacing:-.04em}.auth-brand h1{font-size:1.35rem;margin:0}.auth-brand p{font-size:.8rem;color:#64748b;margin:4px 0 0}.auth-card label{font-size:.73rem;text-transform:uppercase;letter-spacing:.05em}.auth-card input{font-size:16px;padding:13px 14px}.auth-submit{width:100%;margin-top:8px;background:#2563eb;color:#fff;padding:13px 16px;font-size:.95rem}.auth-submit:disabled{opacity:.65;cursor:wait}.auth-error{display:none;margin-top:12px;background:#fef2f2;border:1px solid #fecaca;color:#b91c1c;border-radius:10px;padding:10px 12px;font-size:.8rem;line-height:1.4}.auth-note{margin-top:15px;color:#64748b;font-size:.75rem;line-height:1.45;text-align:center}.auth-loading{text-align:center;color:#64748b;font-size:.85rem;padding:12px 0}.user-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.12);padding:6px 7px 6px 11px;border-radius:999px}.user-chip span{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.76rem}.btn-logout{background:#fff;color:#0f172a;padding:7px 10px;border-radius:999px}.cloud-dot{width:8px;height:8px;border-radius:999px;display:inline-block;background:#94a3b8;margin-right:5px}.cloud-dot.online{background:#22c55e;box-shadow:0 0 0 4px rgba(34,197,94,.14)}.cloud-dot.syncing{background:#f59e0b}.cloud-dot.offline{background:#ef4444}
+@media(max-width:650px){.auth-screen{padding:16px}.auth-card{padding:22px;border-radius:20px}.user-chip{width:100%;justify-content:space-between;border-radius:12px}.user-chip span{max-width:70vw}}
+</style>
+
+<style id="app-install-style">
+#appInstallCard{position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:99999;background:#0f172a;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:18px;box-shadow:0 18px 50px rgba(15,23,42,.28);padding:14px 15px;display:none;gap:12px;align-items:center;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+#appInstallCard .install-icon{width:46px;height:46px;border-radius:13px;background:#fff;color:#0f172a;display:grid;place-items:center;font-weight:900;font-size:18px;flex:0 0 auto}
+#appInstallCard .install-copy{flex:1;min-width:0}
+#appInstallCard .install-copy b{display:block;font-size:14px;margin-bottom:3px}
+#appInstallCard .install-copy span{display:block;font-size:12px;line-height:1.35;color:#cbd5e1}
+#appInstallCard .install-actions{display:flex;gap:7px;align-items:center}
+#appInstallCard button{border:0;border-radius:10px;padding:9px 11px;font-weight:800;font-size:12px;cursor:pointer}
+#appInstallBtn{background:#fff;color:#0f172a}#appInstallDismiss{background:#1e293b;color:#e2e8f0}
+@media(max-width:650px){#appInstallCard{align-items:flex-start;flex-wrap:wrap}#appInstallCard .install-actions{width:100%}#appInstallCard .install-actions button{flex:1}}
+@media print{#appInstallCard{display:none!important}}
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="topbar"><div class="toprow"><div class="title"><h1>Smart Kitchen Manager</h1><p id="save-status">Información guardada localmente</p></div><div class="controls"><button class="btn-save" onclick="saveAll()">💾 Guardar</button><button class="btn-json" onclick="saveJSON()">⬇️ Backup JSON</button><input type="file" id="fileInput" hidden accept=".json" onchange="loadJSON(this)"><button class="btn-load" onclick="document.getElementById('fileInput').click()">📂 Cargar JSON</button><button class="btn-export" onclick="exportCSV()">📊 Exportar CSV</button></div></div></div>
+<div id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-brand"><div class="auth-logo">SK</div><div><h1>Smart Kitchen</h1><p>Acceso privado · información sincronizada</p></div></div>
+    <div id="authLoading" class="auth-loading">Verificando sesión…</div>
+    <form id="loginForm" style="display:none">
+      <div class="form-group"><label for="loginEmail">Correo electrónico</label><input id="loginEmail" type="email" inputmode="email" autocomplete="username" placeholder="correo@ejemplo.com" required></div>
+      <div class="form-group" style="margin-top:12px"><label for="loginPassword">Contraseña</label><input id="loginPassword" type="password" autocomplete="current-password" placeholder="Contraseña" required></div>
+      <button id="loginButton" class="auth-submit" type="submit">Entrar a Smart Kitchen</button>
+      <div id="authError" class="auth-error"></div>
+      <div class="auth-note">Solo pueden entrar las cuentas que tú hayas creado en Firebase Authentication.</div>
+    </form>
+  </div>
+</div>
+<div class="container" id="appShell" style="display:none">
+  <div id="mobileEnvNotice" style="display:none;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:.82rem;line-height:1.45"><b>Modo archivo local</b><br>En iPhone, la vista previa de archivos HTML puede bloquear los botones. Para usar todas las funciones, abre Smart Kitchen como sitio web o app instalada desde Safari.</div>
+  <div class="topbar"><div class="toprow"><div class="title"><h1>Smart Kitchen Manager</h1><p id="save-status"><span id="cloudDot" class="cloud-dot"></span>Conectando con Firebase…</p></div><div class="controls"><button class="btn-save" onclick="saveAll()">☁️ Guardar ahora</button><button class="btn-json" onclick="saveJSON()">⬇️ Backup JSON</button><input type="file" id="fileInput" hidden accept=".json" onchange="loadJSON(this)"><button class="btn-load" onclick="document.getElementById('fileInput').click()">📂 Cargar JSON</button><button class="btn-export" onclick="exportCSV()">📊 Exportar CSV</button><div class="user-chip"><span id="currentUserEmail">—</span><button class="btn-logout" onclick="firebaseLogout()">Salir</button></div></div></div></div>
 
   <div class="nav"><button id="tabPeople" class="tab active" onclick="showView('people')">👥 Personas guardadas</button><button id="tabWeek" class="tab" onclick="showView('week')">📅 Semana</button></div>
 
@@ -67,9 +133,15 @@ function normalizeClient(c={}){return{id:c.id||Date.now()+Math.floor(Math.random
 function esc(v=''){return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function planClass(plan){const p=(plan||'').trim();if(p==='3 Comidas')return'plan-3';if(p==='Desayuno y Comida')return'plan-breakfast-lunch';if(p==='Comida y Cena')return'plan-lunch-dinner';if(p==='Solo Desayuno')return'plan-breakfast';if(p==='Solo Comida')return'plan-lunch';if(p==='Solo Cena')return'plan-dinner';return'plan-custom'}
 function toggleCollapse(btn){const box=btn.closest('.collapsible');if(box)box.classList.toggle('collapsed')}
-function saveAll(){localStorage.setItem(CLIENT_KEY,JSON.stringify(clients));localStorage.setItem(WEEK_KEY,JSON.stringify(weeks));localStorage.setItem(MENU_KEY,JSON.stringify(menus));const s=document.getElementById('save-status');s.textContent='¡Todo guardado!';setTimeout(()=>s.textContent='Información guardada localmente',2200)}
-function autoSave(){localStorage.setItem(CLIENT_KEY,JSON.stringify(clients));localStorage.setItem(WEEK_KEY,JSON.stringify(weeks));localStorage.setItem(MENU_KEY,JSON.stringify(menus))}
-function loadAll(){try{const a=localStorage.getItem(CLIENT_KEY);if(a)clients=JSON.parse(a).map(normalizeClient)}catch(e){clients=[]}try{const w=localStorage.getItem(WEEK_KEY);if(w)weeks=JSON.parse(w)||{}}catch(e){weeks={}}try{const m=localStorage.getItem(MENU_KEY);if(m)menus=JSON.parse(m)||{}}catch(e){menus={}}setDefaultWeek();render()}
+function cacheLocal(){try{localStorage.setItem(CLIENT_KEY,JSON.stringify(clients));localStorage.setItem(WEEK_KEY,JSON.stringify(weeks));localStorage.setItem(MENU_KEY,JSON.stringify(menus))}catch(e){console.warn('Local cache error',e)}}
+function setCloudStatus(message,state='online'){const s=document.getElementById('save-status');if(!s)return;const dot=`<span id="cloudDot" class="cloud-dot ${state}"></span>`;s.innerHTML=dot+esc(message)}
+function saveAll(){cacheLocal();if(typeof window.smartKitchenCloudSave==='function'){setCloudStatus('Guardando en Firebase…','syncing');window.smartKitchenCloudSave(true)}else{setCloudStatus('Guardado en este dispositivo','offline')}}
+function autoSave(){cacheLocal();if(typeof window.smartKitchenCloudSave==='function')window.smartKitchenCloudSave(false)}
+function loadAll(){try{const a=localStorage.getItem(CLIENT_KEY);if(a)clients=JSON.parse(a).map(normalizeClient)}catch(e){clients=[]}try{const w=localStorage.getItem(WEEK_KEY);if(w)weeks=JSON.parse(w)||{}}catch(e){weeks={}}try{const m=localStorage.getItem(MENU_KEY);if(m)menus=JSON.parse(m)||{}}catch(e){menus={}}if(!currentWeek)setDefaultWeek();render()}
+window.getSmartKitchenState=()=>({clients:clients.map(normalizeClient),weeks:weeks||{},menus:menus||{}});
+window.applySmartKitchenState=(data={})=>{clients=Array.isArray(data.clients)?data.clients.map(normalizeClient):[];weeks=(data.weeks&&typeof data.weeks==='object')?data.weeks:{};menus=(data.menus&&typeof data.menus==='object')?data.menus:{};if(!currentWeek)setDefaultWeek();cacheLocal();render()};
+window.loadSmartKitchenLocal=()=>{loadAll();return window.getSmartKitchenState()};
+window.clearSmartKitchenSession=()=>{clients=[];weeks={};menus={};selectedWeekPersonId=null;try{localStorage.removeItem(CLIENT_KEY);localStorage.removeItem(WEEK_KEY);localStorage.removeItem(MENU_KEY)}catch(e){}};
 function setDefaultWeek(){const d=new Date(),day=d.getDay(),diff=(day===0?-6:1-day);d.setDate(d.getDate()+diff);currentWeek=d.toISOString().slice(0,10);document.getElementById('weekDate').value=currentWeek}
 function showView(v){document.getElementById('peopleView').classList.toggle('active',v==='people');document.getElementById('weekView').classList.toggle('active',v==='week');document.getElementById('tabPeople').classList.toggle('active',v==='people');document.getElementById('tabWeek').classList.toggle('active',v==='week');if(v==='week')renderWeek()}
 function addPerson(){clients.push(normalizeClient({id:Date.now()+Math.floor(Math.random()*10000)}));renderPeople();setTimeout(()=>document.querySelector('#clients-container .card:last-child input')?.focus(),50);autoSave()}
@@ -78,12 +150,12 @@ function removePerson(id){if(!confirm('¿Borrar esta persona del catálogo? Tamb
 function planText(c){return c.plan==='Custom'?(c.planCustom||'---'):c.plan}function diasText(c){return c.dias==='Personalizado'?(c.diasCustom||'---'):c.dias}function modalidadText(c){return c.modalidadPago==='Otro'?(c.modalidadCustom||'---'):c.modalidadPago}function pagoClass(p){return p==='Pagado por adelantado'?'advance':p==='Pagado'?'paid':p==='No pagado'?'unpaid':'pending'}function formatDate(v){if(!v)return'---';const [y,m,d]=v.split('-');return `${d}/${m}/${y}`}function addDaysISO(iso,n){if(!iso)return'';const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}function weekEndDate(selectedDate=currentWeek){if(!selectedDate)return'';const d=new Date(selectedDate+'T12:00:00');const day=d.getDay();let daysToFriday;if(day===0){daysToFriday=5}else if(day===6){daysToFriday=6}else{daysToFriday=5-day}d.setDate(d.getDate()+daysToFriday);return d.toISOString().slice(0,10)}function effectivePaymentStatus(c,weekStart=currentWeek){if(c.pagoOverride&&c.pagoOverride!=='Automatico')return c.pagoOverride;const end=weekEndDate(weekStart);if(!c.pagadoHasta||!end)return'No pagado';return c.pagadoHasta>=end?'Pagado':'No pagado'}
 function render(){renderPeople();renderWeek()}
 function renderPeople(){const container=document.getElementById('clients-container');container.innerHTML='';clients.forEach((c,idx)=>{const cp=c.plan==='Custom',cd=c.dias==='Personalizado',cm=c.modalidadPago==='Otro';const card=document.createElement('div');card.className='card collapsible';card.innerHTML=`<div class="card-head"><div class="card-title">${c.nombre?esc(c.nombre):'Nueva persona'}</div><div class="row"><button class="collapse-toggle" onclick="toggleCollapse(this)" title="Colapsar / expandir"><span class="arrow">▼</span></button><button class="btn-delete" onclick="removePerson('${c.id}')">Borrar</button></div></div><div class="collapse-body"><div class="grid"><div class="section-title">Datos y preferencias</div><div class="form-group"><label>Nombre</label><input value="${esc(c.nombre)}" oninput="updateClient('${c.id}','nombre',this.value)" placeholder="Nombre de la persona"></div><div class="form-group"><label>Comida que le gusta</label><input value="${esc(c.gustos)}" oninput="updateClient('${c.id}','gustos',this.value)" placeholder="Ej. pollo, pasta, comida mexicana"></div><div class="form-group"><label>Comida que NO le gusta</label><input value="${esc(c.noGusta)}" oninput="updateClient('${c.id}','noGusta',this.value)" placeholder="Ej. pescado, picante, cebolla"></div><div class="form-group"><label>Solicitudes especiales</label><input value="${esc(c.solicitudes)}" oninput="updateClient('${c.id}','solicitudes',this.value)" placeholder="Ej. poca sal, sin picante, porción especial"></div><div class="section-title">Servicio contratado</div><div class="form-group"><label>Plan de comidas</label><select onchange="updateClient('${c.id}','plan',this.value);renderPeople()">${['3 Comidas','Desayuno y Comida','Comida y Cena','Solo Desayuno','Solo Comida','Solo Cena','Custom'].map(x=>`<option value="${x}" ${c.plan===x?'selected':''}>${x==='Custom'?'Custom...':x}</option>`).join('')}</select>${cp?`<input class="custom-input" value="${esc(c.planCustom)}" oninput="updateClient('${c.id}','planCustom',this.value)" placeholder="Especificar plan">`:''}</div><div class="form-group"><label>Días contratados</label><select onchange="updateClient('${c.id}','dias',this.value);renderPeople()">${['Lunes a Viernes','Lunes a Sábado','Todos los días','Miércoles a Viernes','Personalizado'].map(x=>`<option value="${x}" ${c.dias===x?'selected':''}>${x==='Personalizado'?'Personalizado...':x}</option>`).join('')}</select>${cd?`<input class="custom-input" value="${esc(c.diasCustom)}" oninput="updateClient('${c.id}','diasCustom',this.value)" placeholder="¿Qué días?">`:''}</div><div class="section-title">Control de pago</div><div class="form-group"><label>Estado de pago</label><select onchange="updateClient('${c.id}','pagoOverride',this.value);render()">${['Automatico','Pendiente','Pagado','Pagado por adelantado'].map(x=>`<option value="${x}" ${c.pagoOverride===x?'selected':''}>${x==='Automatico'?'Automático por fecha':x}</option>`).join('')}</select><div class="help">Automático: se considera pagado solo si “Pagado hasta” cubre el viernes de la semana seleccionada. Puedes elegir otro estado manualmente.</div></div><div class="form-group"><label>Modalidad de pago</label><select onchange="updateClient('${c.id}','modalidadPago',this.value);renderPeople()">${['Diario','Semanal','Quincenal','Mensual','Otro'].map(x=>`<option value="${x}" ${c.modalidadPago===x?'selected':''}>${x}</option>`).join('')}</select>${cm?`<input class="custom-input" value="${esc(c.modalidadCustom)}" oninput="updateClient('${c.id}','modalidadCustom',this.value)" placeholder="Especificar modalidad">`:''}</div><div class="form-group"><label>Pagado hasta</label><input type="date" value="${esc(c.pagadoHasta)}" oninput="updateClient('${c.id}','pagadoHasta',this.value)"><div class="help">Para pago semanal, quincenal o mensual.</div></div><div class="form-group"><label>Nota de pago</label><input value="${esc(c.notasPago)}" oninput="updateClient('${c.id}','notasPago',this.value)" placeholder="Ej. septiembre completo"></div></div></div>`;container.appendChild(card)});renderSummary();renderStats();renderWeekSelect()}
-function renderSummary(){const tbody=document.getElementById('summaryBody');const q=(document.getElementById('searchBox')?.value||'').toLowerCase().trim();tbody.innerHTML='';const f=clients.filter(c=>[c.nombre,c.gustos,c.noGusta,c.solicitudes,c.notasPago].join(' ').toLowerCase().includes(q));if(!f.length){tbody.innerHTML='<tr><td colspan="9" class="empty">No hay personas registradas</td></tr>';return}f.forEach(c=>{const r=tbody.insertRow();r.innerHTML=`<td><b>${esc(c.nombre||'---')}</b></td><td>${esc(c.gustos||'---')}</td><td>${esc(c.noGusta||'---')}</td><td>${esc(c.solicitudes||'---')}</td><td>${esc(planText(c))}</td><td>${esc(diasText(c))}</td><td><span class="pill ${pagoClass(effectivePaymentStatus(c))}">${esc(effectivePaymentStatus(c))}</span></td><td>${esc(modalidadText(c))}</td><td>${formatDate(c.pagadoHasta)}</td>`})}
+function renderSummary(){const tbody=document.getElementById('summaryBody');const q=(document.getElementById('searchBox')?.value||'').toLowerCase().trim();tbody.innerHTML='';const f=clients.filter(c=>[c.nombre,c.gustos,c.noGusta,c.solicitudes,c.notasPago].join(' ').toLowerCase().includes(q));if(!f.length){tbody.innerHTML='<tr><td colspan="9" class="empty">No hay personas registradas</td></tr>';return}f.forEach(c=>{const r=tbody.insertRow();r.innerHTML=`<td data-label="Nombre"><b>${esc(c.nombre||'---')}</b></td><td data-label="Le gusta">${esc(c.gustos||'---')}</td><td data-label="No le gusta">${esc(c.noGusta||'---')}</td><td data-label="Solicitud">${esc(c.solicitudes||'---')}</td><td data-label="Plan">${esc(planText(c))}</td><td data-label="Días">${esc(diasText(c))}</td><td data-label="Pago"><span class="pill ${pagoClass(effectivePaymentStatus(c))}">${esc(effectivePaymentStatus(c))}</span></td><td data-label="Modalidad">${esc(modalidadText(c))}</td><td data-label="Pagado hasta">${formatDate(c.pagadoHasta)}</td>`})}
 function renderStats(){document.getElementById('statTotal').textContent=clients.length;document.getElementById('statAdvance').textContent=clients.filter(c=>effectivePaymentStatus(c)==='Pagado por adelantado').length;document.getElementById('statPending').textContent=clients.filter(c=>['Pendiente','No pagado'].includes(effectivePaymentStatus(c))).length;const now=new Date(),end=new Date(now.getFullYear(),now.getMonth()+1,0);document.getElementById('statMonth').textContent=clients.filter(c=>c.pagadoHasta&&new Date(c.pagadoHasta+'T23:59:59')>=end).length}
 function emptyWeekMenu(){return{Lunes:{desayuno:'',comida:'',cena:''},Martes:{desayuno:'',comida:'',cena:''},Miércoles:{desayuno:'',comida:'',cena:''},Jueves:{desayuno:'',comida:'',cena:''},Viernes:{desayuno:'',comida:'',cena:''}}}
 function getWeekMenu(){if(!menus[currentWeek])menus[currentWeek]=emptyWeekMenu();const base=emptyWeekMenu();Object.keys(base).forEach(d=>{menus[currentWeek][d]=Object.assign(base[d],menus[currentWeek][d]||{})});return menus[currentWeek]}
 function updateWeekMenu(day,meal,value){const m=getWeekMenu();m[day][meal]=value;autoSave()}
-function renderWeekMenu(){const host=document.getElementById('weeklyMenu');if(!host)return;const m=getWeekMenu(),days=['Lunes','Martes','Miércoles','Jueves','Viernes'];host.innerHTML=`<div class="menu-grid"><div class="menu-cell menu-head">Día</div><div class="menu-cell menu-head meal-breakfast">☀️ Desayuno</div><div class="menu-cell menu-head meal-lunch">🍽️ Comida</div><div class="menu-cell menu-head meal-dinner">🌙 Cena</div>${days.map(d=>`<div class="menu-cell menu-day">${d}</div><div class="menu-cell"><textarea class="menu-input" placeholder="Desayuno del ${d.toLowerCase()}..." oninput="updateWeekMenu('${d}','desayuno',this.value)">${esc(m[d].desayuno)}</textarea></div><div class="menu-cell"><textarea class="menu-input" placeholder="Comida del ${d.toLowerCase()}..." oninput="updateWeekMenu('${d}','comida',this.value)">${esc(m[d].comida)}</textarea></div><div class="menu-cell"><textarea class="menu-input" placeholder="Cena del ${d.toLowerCase()}..." oninput="updateWeekMenu('${d}','cena',this.value)">${esc(m[d].cena)}</textarea></div>`).join('')}</div>`}
+function renderWeekMenu(){const host=document.getElementById('weeklyMenu');if(!host)return;const m=getWeekMenu(),days=['Lunes','Martes','Miércoles','Jueves','Viernes'];host.innerHTML=`<div class="menu-grid mobile-menu"><div class="menu-header"><div class="menu-cell menu-head">Día</div><div class="menu-cell menu-head meal-breakfast">☀️ Desayuno</div><div class="menu-cell menu-head meal-lunch">🍽️ Comida</div><div class="menu-cell menu-head meal-dinner">🌙 Cena</div></div>${days.map(d=>`<div class="menu-row"><div class="menu-cell menu-day">${d}</div><div class="menu-cell"><div class="mobile-meal-label breakfast">☀️ Desayuno</div><textarea class="menu-input" placeholder="Desayuno del ${d.toLowerCase()}..." oninput="updateWeekMenu('${d}','desayuno',this.value)">${esc(m[d].desayuno)}</textarea></div><div class="menu-cell"><div class="mobile-meal-label lunch">🍽️ Comida</div><textarea class="menu-input" placeholder="Comida del ${d.toLowerCase()}..." oninput="updateWeekMenu('${d}','comida',this.value)">${esc(m[d].comida)}</textarea></div><div class="menu-cell"><div class="mobile-meal-label dinner">🌙 Cena</div><textarea class="menu-input" placeholder="Cena del ${d.toLowerCase()}..." oninput="updateWeekMenu('${d}','cena',this.value)">${esc(m[d].cena)}</textarea></div></div>`).join('')}</div>`}
 function clearWeekMenu(){if(!confirm('¿Quieres limpiar todo el menú de esta semana?'))return;menus[currentWeek]=emptyWeekMenu();autoSave();renderWeekMenu()}
 function changeWeek(v){currentWeek=v||currentWeek;selectedWeekPersonId=null;renderWeek()}
 function getWeekIds(){if(!weeks[currentWeek])weeks[currentWeek]=[];return weeks[currentWeek]}
@@ -92,7 +164,7 @@ function addSelectedPersonToWeek(){const id=document.getElementById('weekPersonS
 function removeFromWeek(id,e){e?.stopPropagation();weeks[currentWeek]=(weeks[currentWeek]||[]).filter(x=>String(x)!==String(id));if(String(selectedWeekPersonId)===String(id))selectedWeekPersonId=null;autoSave();renderWeek()}
 function renderMealSummary(people){const host=document.getElementById('mealSummary'),total=document.getElementById('mealSummaryTotal');if(!host||!total)return;total.textContent=`${people.length} ${people.length===1?'persona':'personas'}`;if(!people.length){host.innerHTML='<div class="meal-summary-empty">Agrega personas a esta semana para ver el resumen.</div>';return}const counts={};people.forEach(c=>{const p=planText(c)||'Sin plan';counts[p]=(counts[p]||0)+1});const order=['3 Comidas','Desayuno y Comida','Comida y Cena','Solo Desayuno','Solo Comida','Solo Cena'];const entries=Object.entries(counts).sort((a,b)=>{const ia=order.indexOf(a[0]),ib=order.indexOf(b[0]);if(ia===-1&&ib===-1)return a[0].localeCompare(b[0]);if(ia===-1)return 1;if(ib===-1)return -1;return ia-ib});host.innerHTML=entries.map(([plan,count])=>`<div class="meal-summary-card ${planClass(plan)}"><div class="meal-summary-plan">${esc(plan)}</div><div class="meal-summary-count">${count} <small>${count===1?'persona':'personas'}</small></div></div>`).join('')}
 function renderWeek(){if(!document.getElementById('weekPersonList'))return;renderWeekMenu();renderWeekSelect();const ids=getWeekIds(),list=document.getElementById('weekPersonList'),people=ids.map(id=>clients.find(c=>String(c.id)===String(id))).filter(Boolean);document.getElementById('weekCount').textContent=`${people.length} ${people.length===1?'persona':'personas'}`;renderMealSummary(people);if(!people.length){list.innerHTML='<div class="empty">Aún no agregas personas a esta semana.</div>';document.getElementById('weekDetail').innerHTML='<div class="collapse-body"><div class="empty">Agrega una persona y selecciónala para consultar su ficha.</div></div>';return}list.innerHTML=people.map(c=>`<div class="person-item ${planClass(planText(c))} ${String(selectedWeekPersonId)===String(c.id)?'active':''}" onclick="selectWeekPerson('${c.id}')"><div><div class="person-name">${esc(c.nombre||'Sin nombre')}</div><div class="person-plan">${esc(planText(c))}</div><div class="person-payment"><span class="pill ${pagoClass(effectivePaymentStatus(c))}">${esc(effectivePaymentStatus(c))}</span></div></div><button class="remove-week" title="Quitar solo de esta semana" onclick="removeFromWeek('${c.id}',event)">✕</button></div>`).join('');if(!selectedWeekPersonId||!people.some(c=>String(c.id)===String(selectedWeekPersonId)))selectedWeekPersonId=people[0].id;renderWeekDetail(selectedWeekPersonId);renderWeekSelect()}
-function selectWeekPerson(id){selectedWeekPersonId=id;renderWeek()}
+function selectWeekPerson(id){selectedWeekPersonId=id;renderWeek();if(window.innerWidth<=900)setTimeout(()=>document.getElementById('weekDetail')?.scrollIntoView({behavior:'smooth',block:'start'}),80)}
 function renderWeekDetail(id){const c=clients.find(x=>String(x.id)===String(id)),d=document.getElementById('weekDetail');if(!c){d.innerHTML='<div class="collapse-body"><div class="empty">Persona no encontrada.</div></div>';return}const wasCollapsed=d.classList.contains('collapsed'),status=effectivePaymentStatus(c),end=weekEndDate(currentWeek),dateCovers=!!c.pagadoHasta&&c.pagadoHasta>=end,manual=c.pagoOverride&&c.pagoOverride!=='Automatico';d.innerHTML=`<div class="row" style="justify-content:space-between;align-items:flex-start;margin-bottom:12px"><div><h2>${esc(c.nombre||'Sin nombre')}</h2><div class="detail-sub">Ficha completa para la semana que inicia <b>${formatDate(currentWeek)}</b> · debe estar cubierto hasta <b>${formatDate(end)}</b></div></div><div class="module-title-actions"><span class="pill ${pagoClass(status)}">${esc(status)}</span><button class="collapse-toggle" onclick="toggleCollapse(this)" title="Colapsar / expandir"><span class="arrow">▼</span></button></div></div><div class="collapse-body"><div class="detail-grid"><div class="detail-box likes"><div class="detail-label"><span class="detail-icon">❤</span>Comida que le gusta</div><div class="detail-value">${esc(c.gustos||'Sin información')}</div></div><div class="detail-box dislikes"><div class="detail-label"><span class="detail-icon">✕</span>Comida que NO le gusta</div><div class="detail-value">${esc(c.noGusta||'Sin información')}</div></div><div class="detail-box full requests"><div class="detail-label"><span class="detail-icon">★</span>Solicitudes especiales</div><div class="detail-value">${esc(c.solicitudes||'Ninguna')}</div></div><div class="detail-box planbox"><div class="detail-label"><span class="detail-icon">🍽️</span>Plan de comidas</div><div class="detail-value">${esc(planText(c))}</div></div><div class="detail-box daysbox"><div class="detail-label"><span class="detail-icon">📅</span>Días contratados</div><div class="detail-value">${esc(diasText(c))}</div></div><div class="detail-box paymentbox"><div class="detail-label"><span class="detail-icon">💳</span>Modalidad de pago</div><div class="detail-value">${esc(modalidadText(c))}</div><div class="help" style="margin-top:7px">Estado: <b>${manual?'Manual':'Automático por fecha'}</b></div></div><div class="detail-box untilbox ${(!dateCovers&&!manual)?'unpaid-date':''}"><div class="detail-label"><span class="detail-icon">${dateCovers?'✓':'!'}</span>Pagado hasta</div><div class="detail-value">${formatDate(c.pagadoHasta)}</div>${!manual?`<div class="help" style="margin-top:7px;color:${dateCovers?'#15803d':'#b91c1c'}">${dateCovers?'Cubre esta semana':'No cubre esta semana'}</div>`:`<div class="help" style="margin-top:7px">Estado manual aplicado</div>`}</div><div class="detail-box full notebox"><div class="detail-label"><span class="detail-icon">📝</span>Nota de pago</div><div class="detail-value">${esc(c.notasPago||'Sin nota')}</div></div></div></div>`;if(wasCollapsed)d.classList.add('collapsed')}
 
 function mealNamesForClient(c){
@@ -144,20 +216,171 @@ function printWeekReport(){
   const menuRows=days.map(day=>`<tr><th>${day}</th><td>${esc(menu[day]?.desayuno||'—')}</td><td>${esc(menu[day]?.comida||'—')}</td><td>${esc(menu[day]?.cena||'—')}</td></tr>`).join('');
   const html=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Semana ${formatDate(currentWeek)}</title><style>
     @page{size:A4 landscape;margin:10mm}*{box-sizing:border-box}body{font-family:Inter,Segoe UI,Arial,sans-serif;margin:0;color:#172033;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.page{max-width:1120px;margin:0 auto}.hero{background:linear-gradient(135deg,#0f172a,#1e3a8a);color:white;border-radius:18px;padding:22px 26px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:end}.eyebrow{font-size:10px;letter-spacing:.18em;font-weight:800;opacity:.7}.hero h1{margin:5px 0 3px;font-size:28px}.hero p{margin:0;opacity:.82;font-size:12px}.datebox{text-align:right}.datebox b{font-size:18px}.section-title{display:flex;justify-content:space-between;align-items:end;margin:16px 0 8px}.section-title h2{font-size:16px;margin:0}.section-title span{font-size:10px;color:#64748b}.summary{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}.summary-chip{border:1px solid #dbe4f0;background:#f8fafc;border-radius:999px;padding:6px 10px;font-size:10px;display:flex;gap:8px;align-items:center}.summary-chip b{background:#0f172a;color:#fff;border-radius:999px;min-width:20px;text-align:center;padding:2px 6px}.people{display:grid;grid-template-columns:1fr 1fr;gap:9px}.person-card{border:1px solid #dbe4f0;border-radius:14px;padding:12px;break-inside:avoid;background:#fff}.person-top{display:flex;justify-content:space-between;gap:12px}.person-top>div{display:grid;grid-template-columns:26px 1fr;column-gap:8px;align-items:center}.num{grid-row:1/3;width:26px;height:26px;border-radius:8px;background:#eef2ff;color:#4338ca;font-size:10px;font-weight:900;display:grid;place-items:center}.person-top h3{font-size:15px;margin:0}.plan-line{font-size:11px;font-weight:800;color:#2563eb;margin-top:2px}.pay{font-size:9px;font-weight:900;padding:5px 8px;border-radius:999px;height:max-content}.pay.ok{background:#dcfce7;color:#166534}.pay.advance{background:#dbeafe;color:#1d4ed8}.pay.no{background:#fee2e2;color:#b91c1c}.person-meta-print{display:grid;grid-template-columns:1fr 1.2fr;gap:8px;margin:9px 0}.person-meta-print>div{background:#f8fafc;border-radius:9px;padding:7px 9px}.person-meta-print small{display:block;font-size:7px;letter-spacing:.08em;color:#64748b;font-weight:900;margin-bottom:3px}.person-meta-print b{font-size:10px}.days-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}.day-slot{border-radius:8px;padding:6px;min-height:43px;border:1px solid #e2e8f0}.day-slot.active{background:#f0fdf4;border-color:#bbf7d0}.day-slot.off{background:#f8fafc;color:#94a3b8}.day-name{display:block;font-size:8px;font-weight:900;text-transform:uppercase;margin-bottom:4px}.meal-tag{display:inline-block;font-size:7px;font-weight:800;background:white;border:1px solid #cbd5e1;border-radius:999px;padding:2px 4px;margin:1px}.not-day{font-size:10px}.notes{font-size:8px;color:#475569;margin-top:7px;padding-top:6px;border-top:1px dashed #e2e8f0}.menu-section{break-inside:avoid;margin-top:17px}.menu-card{border:1px solid #dbe4f0;border-radius:14px;overflow:hidden}.menu-table{width:100%;border-collapse:collapse}.menu-table thead th{background:#0f172a;color:white;font-size:9px;text-transform:uppercase;letter-spacing:.07em;padding:9px}.menu-table tbody th{background:#f8fafc;font-size:10px;padding:9px;text-align:left;width:90px}.menu-table td{font-size:9px;padding:9px;border-left:1px solid #e2e8f0;border-top:1px solid #e2e8f0;vertical-align:top}.menu-table tbody th{border-top:1px solid #e2e8f0}.bfast{color:#b45309}.lunch{color:#047857}.dinner{color:#4338ca}.footer{margin-top:8px;text-align:right;color:#94a3b8;font-size:8px}.no-print{position:fixed;right:16px;bottom:16px}.no-print button{background:#0f172a;color:white;border:0;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer}@media print{.no-print{display:none}.page{max-width:none}.person-card{box-shadow:none}}
-  </style></head><body><div class="page">
+  </style>
+<style id="app-install-style">
+#appInstallCard{position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:99999;background:#0f172a;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:18px;box-shadow:0 18px 50px rgba(15,23,42,.28);padding:14px 15px;display:none;gap:12px;align-items:center;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+#appInstallCard .install-icon{width:46px;height:46px;border-radius:13px;background:#fff;color:#0f172a;display:grid;place-items:center;font-weight:900;font-size:18px;flex:0 0 auto}
+#appInstallCard .install-copy{flex:1;min-width:0}
+#appInstallCard .install-copy b{display:block;font-size:14px;margin-bottom:3px}
+#appInstallCard .install-copy span{display:block;font-size:12px;line-height:1.35;color:#cbd5e1}
+#appInstallCard .install-actions{display:flex;gap:7px;align-items:center}
+#appInstallCard button{border:0;border-radius:10px;padding:9px 11px;font-weight:800;font-size:12px;cursor:pointer}
+#appInstallBtn{background:#fff;color:#0f172a}#appInstallDismiss{background:#1e293b;color:#e2e8f0}
+@media(max-width:650px){#appInstallCard{align-items:flex-start;flex-wrap:wrap}#appInstallCard .install-actions{width:100%}#appInstallCard .install-actions button{flex:1}}
+@media print{#appInstallCard{display:none!important}}
+</style>
+</head><body><div class="page">
     <header class="hero"><div><div class="eyebrow">SMART KITCHEN MANAGER · PLAN SEMANAL</div><h1>Resumen de la semana</h1><p>${people.length} ${people.length===1?'persona':'personas'} programadas · Información de servicio y menú</p></div><div class="datebox"><div class="eyebrow">PERIODO</div><b>${formatDate(currentWeek)} — ${formatDate(end)}</b></div></header>
     <div class="section-title"><h2>Personas y comidas solicitadas</h2><span>Los recuadros verdes indican los días contratados.</span></div><div class="summary">${summary}</div><section class="people">${personCards}</section>
     <section class="menu-section"><div class="section-title"><h2>Menú de la semana</h2><span>Desayuno · Comida · Cena</span></div><div class="menu-card"><table class="menu-table"><thead><tr><th>Día</th><th class="bfast">Desayuno</th><th class="lunch">Comida</th><th class="dinner">Cena</th></tr></thead><tbody>${menuRows}</tbody></table></div></section>
     <div class="footer">Generado desde Smart Kitchen Manager · ${new Date().toLocaleString('es-MX')}</div>
-  </div><div class="no-print"><button onclick="window.print()">🖨️ Imprimir</button></div><script>setTimeout(()=>window.print(),350)<\/script></body></html>`;
+  </div><div class="no-print"><button onclick="window.print()">🖨️ Imprimir</button></div><script>setTimeout(()=>window.print(),350)<\/script>
+<div id="appInstallCard" role="status" aria-live="polite">
+  <div class="install-icon">SK</div>
+  <div class="install-copy"><b>Instala Smart Kitchen como app</b><span id="appInstallText">Ábrela desde Safari y agrégala a tu pantalla de inicio.</span></div>
+  <div class="install-actions"><button id="appInstallBtn" type="button">Instalar</button><button id="appInstallDismiss" type="button">Ahora no</button></div>
+</div>
+<script>
+(function(){
+  var card=document.getElementById('appInstallCard'), btn=document.getElementById('appInstallBtn'), dismiss=document.getElementById('appInstallDismiss'), text=document.getElementById('appInstallText');
+  if(!card||window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true)return;
+  var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  var isSafari=isIOS && /safari/i.test(navigator.userAgent) && !/crios|fxios|edgios/i.test(navigator.userAgent);
+  var deferredPrompt=null;
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;card.style.display='flex';text.textContent='Instálala para abrirla desde un icono y usarla como aplicación.';btn.style.display='inline-block';});
+  if(isIOS){card.style.display='flex';btn.style.display='inline-block';btn.textContent='Cómo instalar';text.textContent=isSafari?'Safari → Compartir → Añadir a pantalla de inicio.':'Ábrela primero en Safari y después usa Compartir → Añadir a pantalla de inicio.';}
+  btn.addEventListener('click',async function(){
+    if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){} deferredPrompt=null;card.style.display='none';return;}
+    if(isIOS){alert('En Safari: toca el botón Compartir (cuadro con flecha hacia arriba) y selecciona “Añadir a pantalla de inicio”.');return;}
+  });
+  dismiss.addEventListener('click',function(){card.style.display='none';try{sessionStorage.setItem('sk_install_dismissed','1')}catch(e){}});
+  try{if(sessionStorage.getItem('sk_install_dismissed')==='1')card.style.display='none'}catch(e){}
+})();
+<\/script>
+</body></html>`;
   const w=window.open('','_blank');if(!w){alert('El navegador bloqueó la ventana de impresión. Permite ventanas emergentes para este archivo.');return}w.document.open();w.document.write(html);w.document.close();
 }
 
-function saveJSON(){const data={version:10,clients,weeks,menus};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup_smartkitchen_v10.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function saveJSON(){const data={version:14,clients,weeks,menus};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup_smartkitchen_firebase_v14.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function loadJSON(input){const file=input.files[0];if(!file)return;const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);if(Array.isArray(d)){clients=d.map(normalizeClient);weeks={}}else if(d&&Array.isArray(d.clients)){clients=d.clients.map(normalizeClient);weeks=d.weeks||{};menus=d.menus||{}}else throw new Error();autoSave();render();alert('Información cargada correctamente.')}catch(err){alert('El archivo JSON no es válido.')}input.value=''};r.readAsText(file)}
 function cleanText(t){if(!t)return'';return t.toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ñ/g,'n').replace(/Ñ/g,'N').trim()}
 function exportCSV(){if(!clients.length)return alert('No hay datos para exportar');let csv='sep=;\n';const h=['NOMBRE','LE GUSTA','NO LE GUSTA','SOLICITUDES ESPECIALES','PLAN DE COMIDAS','DIAS CONTRATADOS','ESTADO DE PAGO','CONTROL DE PAGO','MODALIDAD DE PAGO','PAGADO HASTA','NOTA DE PAGO'];csv+=h.join(';')+'\n';clients.forEach(c=>{csv+=[c.nombre,c.gustos,c.noGusta,c.solicitudes,planText(c),diasText(c),effectivePaymentStatus(c),c.pagoOverride==='Automatico'?'Automatico por fecha':c.pagoOverride,modalidadText(c),c.pagadoHasta,c.notasPago].map(v=>`"${cleanText(v).replace(/"/g,'""')}"`).join(';')+'\n'});const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`SmartKitchen_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)}
-window.onload=loadAll;
+function initSmartKitchen(){
+  try{
+    if(location.protocol==='file:'){const n=document.getElementById('mobileEnvNotice');if(n){n.style.display='block';n.innerHTML='<b>Esta versión usa Firebase.</b><br>Ábrela desde tu dirección de GitHub Pages para iniciar sesión y sincronizar la información.'}}
+  }catch(err){console.error('Smart Kitchen init error',err)}
+  if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){navigator.serviceWorker.register('./service-worker.js').catch(()=>{})}
+}
+window.addEventListener('DOMContentLoaded',initSmartKitchen);
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBGAXiJM_lsggC43ivs8AkVEaeyrMeI0kY",
+  authDomain: "smart-kitchen-85d61.firebaseapp.com",
+  projectId: "smart-kitchen-85d61",
+  storageBucket: "smart-kitchen-85d61.firebasestorage.app",
+  messagingSenderId: "155140366354",
+  appId: "1:155140366354:web:33513379f94f9f175c78cb"
+};
+
+const firebaseApp=initializeApp(firebaseConfig);
+const auth=getAuth(firebaseApp);
+const db=getFirestore(firebaseApp);
+const sharedRef=doc(db,'smartKitchen','shared');
+let unsubscribe=null;
+let saveTimer=null;
+let cloudStarted=false;
+
+const authScreen=document.getElementById('authScreen');
+const appShell=document.getElementById('appShell');
+const loginForm=document.getElementById('loginForm');
+const authLoading=document.getElementById('authLoading');
+const authError=document.getElementById('authError');
+const loginButton=document.getElementById('loginButton');
+const emailInput=document.getElementById('loginEmail');
+const passwordInput=document.getElementById('loginPassword');
+
+function showError(message){authError.textContent=message;authError.style.display='block'}
+function friendlyAuthError(error){const code=String(error?.code||'');if(code.includes('invalid-credential')||code.includes('wrong-password')||code.includes('user-not-found'))return 'El correo o la contraseña no son correctos.';if(code.includes('too-many-requests'))return 'Se hicieron demasiados intentos. Espera un momento e inténtalo nuevamente.';if(code.includes('network-request-failed'))return 'No se pudo conectar a Internet. Revisa tu conexión.';if(code.includes('invalid-email'))return 'El correo electrónico no es válido.';return 'No se pudo iniciar sesión. '+(error?.message||'')}
+function showLogin(){appShell.style.display='none';authScreen.style.display='grid';authLoading.style.display='none';loginForm.style.display='block';loginButton.disabled=false;document.getElementById('currentUserEmail').textContent='—'}
+function showApp(user){authScreen.style.display='none';appShell.style.display='block';document.getElementById('currentUserEmail').textContent=user.email||'Usuario';}
+
+async function saveCloudNow(){
+  const user=auth.currentUser;if(!user||typeof window.getSmartKitchenState!=='function')return;
+  const state=window.getSmartKitchenState();
+  try{
+    setCloudStatus('Guardando en Firebase…','syncing');
+    await setDoc(sharedRef,{clients:state.clients,weeks:state.weeks,menus:state.menus,schemaVersion:14,updatedAt:serverTimestamp(),updatedBy:user.email||user.uid},{merge:true});
+    setCloudStatus('Sincronizado con Firebase','online');
+  }catch(error){console.error('Firebase save error',error);setCloudStatus('Sin conexión · copia local guardada','offline')}
+}
+window.smartKitchenCloudSave=(immediate=false)=>{clearTimeout(saveTimer);if(immediate){saveCloudNow();return}saveTimer=setTimeout(saveCloudNow,650)};
+window.firebaseLogout=async()=>{window.clearSmartKitchenSession?.();await signOut(auth)};
+
+async function startCloud(user){
+  if(unsubscribe){unsubscribe();unsubscribe=null}
+  showApp(user);
+  setCloudStatus('Conectando con Firebase…','syncing');
+  try{
+    const snap=await getDoc(sharedRef);
+    if(snap.exists()){window.applySmartKitchenState(snap.data())}
+    else{window.loadSmartKitchenLocal();await saveCloudNow()}
+    cloudStarted=true;
+    unsubscribe=onSnapshot(sharedRef,{includeMetadataChanges:true},snap=>{
+      if(!snap.exists())return;
+      const d=snap.data();
+      const incoming={clients:Array.isArray(d.clients)?d.clients:[],weeks:d.weeks||{},menus:d.menus||{}};
+      const current=window.getSmartKitchenState();
+      if(JSON.stringify(incoming)!==JSON.stringify(current))window.applySmartKitchenState(incoming);
+      if(!snap.metadata.hasPendingWrites)setCloudStatus('Sincronizado con Firebase','online');
+    },error=>{console.error('Firebase realtime error',error);setCloudStatus('Sin conexión · trabajando con copia local','offline')});
+  }catch(error){
+    console.error('Firebase startup error',error);
+    window.loadSmartKitchenLocal();
+    setCloudStatus('Sin conexión · trabajando con copia local','offline');
+  }
+}
+
+loginForm.addEventListener('submit',async e=>{
+  e.preventDefault();authError.style.display='none';loginButton.disabled=true;loginButton.textContent='Ingresando…';
+  try{await signInWithEmailAndPassword(auth,emailInput.value.trim(),passwordInput.value)}
+  catch(error){showError(friendlyAuthError(error));loginButton.disabled=false;loginButton.textContent='Entrar a Smart Kitchen'}
+});
+
+try{await setPersistence(auth,browserLocalPersistence)}catch(e){console.warn('Auth persistence',e)}
+onAuthStateChanged(auth,user=>{
+  authLoading.style.display='none';
+  if(user){loginForm.style.display='none';loginButton.disabled=false;loginButton.textContent='Entrar a Smart Kitchen';startCloud(user)}
+  else{cloudStarted=false;if(unsubscribe){unsubscribe();unsubscribe=null}clearTimeout(saveTimer);showLogin()}
+});
+</script>
+
+<div id="appInstallCard" role="status" aria-live="polite">
+  <div class="install-icon">SK</div>
+  <div class="install-copy"><b>Instala Smart Kitchen como app</b><span id="appInstallText">Ábrela desde Safari y agrégala a tu pantalla de inicio.</span></div>
+  <div class="install-actions"><button id="appInstallBtn" type="button">Instalar</button><button id="appInstallDismiss" type="button">Ahora no</button></div>
+</div>
+<script>
+(function(){
+  var card=document.getElementById('appInstallCard'), btn=document.getElementById('appInstallBtn'), dismiss=document.getElementById('appInstallDismiss'), text=document.getElementById('appInstallText');
+  if(!card||window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true)return;
+  var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  var isSafari=isIOS && /safari/i.test(navigator.userAgent) && !/crios|fxios|edgios/i.test(navigator.userAgent);
+  var deferredPrompt=null;
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferredPrompt=e;card.style.display='flex';text.textContent='Instálala para abrirla desde un icono y usarla como aplicación.';btn.style.display='inline-block';});
+  if(isIOS){card.style.display='flex';btn.style.display='inline-block';btn.textContent='Cómo instalar';text.textContent=isSafari?'Safari → Compartir → Añadir a pantalla de inicio.':'Ábrela primero en Safari y después usa Compartir → Añadir a pantalla de inicio.';}
+  btn.addEventListener('click',async function(){
+    if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){} deferredPrompt=null;card.style.display='none';return;}
+    if(isIOS){alert('En Safari: toca el botón Compartir (cuadro con flecha hacia arriba) y selecciona “Añadir a pantalla de inicio”.');return;}
+  });
+  dismiss.addEventListener('click',function(){card.style.display='none';try{sessionStorage.setItem('sk_install_dismissed','1')}catch(e){}});
+  try{if(sessionStorage.getItem('sk_install_dismissed')==='1')card.style.display='none'}catch(e){}
+})();
 </script>
 </body>
 </html>

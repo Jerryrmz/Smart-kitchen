@@ -1,0 +1,48 @@
+SMART KITCHEN FIREBASE — V14
+
+ESTA VERSION YA ESTA CONECTADA A:
+- Firebase Authentication (correo + contraseña)
+- Cloud Firestore
+- Proyecto: smart-kitchen-85d61
+- GitHub Pages: https://jerryrmz.github.io/Smart-kitchen/
+
+COMO SUBIRLA A GITHUB
+1. Entra a https://github.com/jerryrmz/Smart-kitchen
+2. En la pestaña Code, presiona Add file > Upload files.
+3. Descomprime este ZIP en tu computadora.
+4. Arrastra TODOS los archivos de esta carpeta a la raiz del repositorio.
+5. Si GitHub indica que index.html, service-worker.js o manifest.webmanifest ya existen, deben reemplazarse con estos.
+6. Abajo escribe un mensaje como: Smart Kitchen Firebase V14
+7. Presiona Commit changes.
+8. Espera 1 a 3 minutos.
+9. Abre https://jerryrmz.github.io/Smart-kitchen/?v=14
+
+PRIMER INGRESO
+- Usa el correo y contraseña que creaste en Firebase Authentication.
+- NO existe un boton para registrarse. Tu controlas las cuentas desde Firebase > Authentication > Users.
+- Si Firestore todavia no tiene informacion y este navegador tiene datos de una version anterior, V14 los sube automaticamente a Firebase al primer acceso.
+- Si tus datos estaban en otro dispositivo, usa Backup JSON / Cargar JSON una sola vez para migrarlos.
+
+SINCRONIZACION
+- Altas, cambios de personas, pagos, semanas y menus se guardan en Firebase automaticamente.
+- Los otros usuarios autorizados reciben los cambios en tiempo real.
+- El boton 'Guardar ahora' fuerza una sincronizacion inmediata.
+- Backup JSON sigue disponible como respaldo manual.
+
+AGREGAR O QUITAR USUARIOS
+Firebase Console > Seguridad > Authentication > Usuarios.
+- Add user: da acceso a una nueva persona.
+- Disable/Delete: le quita el acceso.
+
+REGLAS FIRESTORE ESPERADAS
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+
+IMPORTANTE
+No compartas contraseñas. Cada persona debe tener su propia cuenta.
